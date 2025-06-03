@@ -17,7 +17,24 @@
         "command": "floating-notes.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers":{
+      "activitybar": [
+        {
+          "id": "floating-notes-explorer",
+          "title": "Floating Notes Explorer",
+          "icon": "resources/floating_notes_icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "floating-notes-explorer": [
+        {
+          "id": "note-outline",
+          "name": "Notes Outline"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
