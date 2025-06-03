@@ -22,8 +22,8 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.window.showInformationMessage('Hello World from floating notes!');
 	});
 
-    // const rootPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-	const rootPath = "/Users/donglemcsplongle/Documents/Coding/floating-notes/";
+    const rootPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+	// const rootPath = "/Users/donglemcsplongle/Documents/Coding/floating-notes/";
 	vscode.window.showInformationMessage(rootPath);
     const treeDataProvider = new FolderTreeProvider(rootPath);
     vscode.window.registerTreeDataProvider('note-outline', treeDataProvider);
