@@ -69,3 +69,13 @@ You can author your README using Visual Studio Code. Here are some useful editor
 * [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
 
 **Enjoy!**
+
+
+## Devnotes
+Attach local notes to workspace/folder/repo by default 
+
+Optional:
+    Have notes be able to be commited on a seperate branch
+    Scratchfile in addition to notes in the same way
+    Function search within notes
+    Branch specific tag
