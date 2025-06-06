@@ -79,3 +79,4 @@ Optional:
     Scratchfile in addition to notes in the same way
     Function search within notes
     Branch specific tag
+    Reset initialization function

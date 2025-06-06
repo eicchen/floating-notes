@@ -14,19 +14,26 @@ const mutex = new Mutex();
 //     "ts",
 // ];
 
-const dir_path: string = __dirname + '/floating-notes';
-const subdirs: string[] = ['notes', 'scratchpads'].map(name => path.join(dir_path, name));
+//TODO change default dir_path
+let dir_path: string = __dirname + '/floating-notes';
+let subdirs: string[] = ['notes', 'scratchpads'].map(name => path.join(dir_path, name));
 
-async function fnInitialize() {
+export async function fnInitialize(work_path?: string) {
     //!clear folder for testing
     const release = await mutex.acquire();
+    if(work_path){
+        dir_path = path.join(work_path, 'floating-notes'); 
+        subdirs = ['notes', 'scratchpads'].map(name => path.join(dir_path, name));
+        console.log(work_path);
+
+    }
+
     await fs.rm(dir_path, {recursive: true, force: true}); 
-    console.log("Directory cleared!\n");
+    console.log(`${dir_path}\nDirectory cleared!\n`);
 
     await createSubdirectories();
 
     release();
-
 }
 async function createSubdirectories() {
     for (const fullPath of subdirs) {
@@ -45,7 +52,7 @@ async function createSubdirectories() {
 }
 
 //? Defaults to creating a 'note.md' in the notes folder
-async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirs[0]){
+export async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirs[0]){
     const release = await mutex.acquire();
     let fullPath = path.join(dirPath, `${fileName}.${fileType}`);
     // let fullPath = path.join(dirPath, fileName, '.', fileType);
@@ -59,7 +66,7 @@ async function createFile(fileName:string = "note", fileType: string = "md", dir
             iter += 1;
         }
     } catch {
-        await fs.writeFile(fullPath, "penis");
+        await fs.writeFile(fullPath, "test text");
         console.log(`File added: ${fullPath}`);
     }   
     release();

@@ -2,31 +2,31 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { FolderTreeProvider } from "./treeView";
-
-
+import * as io_func from "./io_functions";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+	const dirPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+	if(dirPath !== undefined){
+			// const rootPath = "/Users/donglemcsplongle/Documents/Coding/floating-notes/";
+		io_func.fnInitialize(dirPath);
+		console.log('Floating notes initialized');
+		vscode.window.showInformationMessage(dirPath);
+		const treeDataProvider = new FolderTreeProvider(dirPath);
+		vscode.window.registerTreeDataProvider('note-outline', treeDataProvider);
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "floating-notes" is now active!');
+		// Use the console to output diagnostic information (console.log) and errors (console.error)
+		// This line of code will only be executed once when your extension is activated
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('floating-notes.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from floating notes!');
+	}else{
+		vscode.window.showErrorMessage("No workspace open!");
+	}
+
+	const disposable = vscode.commands.registerCommand('floating-notes.newNote', () => {
+		io_func.createFile()
+		vscode.window.showInformationMessage('New Note created!');
 	});
-
-    const rootPath = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-	// const rootPath = "/Users/donglemcsplongle/Documents/Coding/floating-notes/";
-	vscode.window.showInformationMessage(rootPath);
-    const treeDataProvider = new FolderTreeProvider(rootPath);
-    vscode.window.registerTreeDataProvider('note-outline', treeDataProvider);
 
 	context.subscriptions.push(disposable);
 }

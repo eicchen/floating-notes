@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "floating-notes.helloWorld",
-        "title": "Hello World"
+        "command": "floating-notes.newNote",
+        "title": "Floating Notes: Create New Note"
       }
     ],
     "viewsContainers": {
