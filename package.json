@@ -14,12 +14,12 @@
   "contributes": {
     "commands": [
       {
-        "command": "floating_notes.newNote",
+        "command": "floating-notes.newNote",
         "title": "Floating Notes: Create New Note",
         "icon": "$(new-file)"
       },
       {
-        "command": "floating_notes.refreshView",
+        "command": "floating-notes.refreshView",
         "title": "Floating Notes: Refresh Notes",
         "icon": "$(refresh)"
       }
@@ -27,31 +27,31 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "floating_notes_explorer",
+          "id": "floating-notes-explorer",
           "title": "Floating Notes Explorer",
-          "icon": "resources/floating_notes_icon.svg"
+          "icon": "resources/floating-notes-icon.svg"
         }
       ]
     },
     "views": {
-      "floating_notes_explorer": [
+      "floating-notes-explorer": [
         {
-          "id": "noteOutline",
-          "name": "Notes Outline"
+          "id": "fn-notes",
+          "name": "Notes"
         }
       ]
     },
     "menus": {
-      "view/title":[
+      "view/title": [
         {
-          "command": "floating_notes.newNote",
+          "command": "floating-notes.newNote",
           "title": "$(new-file) New Note",
-          "when": "view == noteOutline",
+          "when": "view == fn-notes",
           "group": "navigation"
         },
         {
-          "command": "floating_notes.refreshView",
-          "when": "view == noteOutline",
+          "command": "floating-notes.refreshView",
+          "when": "view == fn-notes",
           "group": "navigation"
         }
       ]

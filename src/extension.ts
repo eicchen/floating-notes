@@ -1,14 +1,17 @@
 import * as vscode from 'vscode';
+// import * as path from 'path';
+// import * as fs from 'fs';
 import { FolderTreeProvider } from "./treeView";
 import * as io_func from "./io_functions";
 export function activate(context: vscode.ExtensionContext) {
 	// Initialize extension folders 
-	const dirPath =
-    vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
+	let debug_toggle = true;   // eslint-disable-line 
+	const dirPath =  vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
 		? vscode.workspace.workspaceFolders[0].uri.fsPath
 		: undefined;
+
 	if(dirPath !== undefined){
-		io_func.fnInitialize(dirPath);
+		io_func.fnInitialize(dirPath, debug_toggle);
 		console.log('Floating notes initialized');
 		// vscode.window.showInformationMessage(`dirPath: ${dirPath}`);
 	}else{
@@ -16,8 +19,8 @@ export function activate(context: vscode.ExtensionContext) {
 		return;
 	}
 
-	const treeDataProvider = new FolderTreeProvider(dirPath);
-	vscode.window.registerTreeDataProvider('noteOutline', treeDataProvider);
+	const treeDataProvider = new FolderTreeProvider(dirPath)
+	vscode.window.registerTreeDataProvider('fn-notes', treeDataProvider);
 
 	// ------------- UI ------------- //
 	// const newNote_button = vscode.window.createStatusBarItem(2, 10);
@@ -30,13 +33,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 	// ------------- Commands ------------- //
-	const newNote_cmd = vscode.commands.registerCommand('floating_notes.newNote', () => {
+	const newNote_cmd = vscode.commands.registerCommand('floating-notes.newNote', () => {
 		io_func.createFile();
 		treeDataProvider.refresh();
 		vscode.window.showInformationMessage('New Note created!');
 	});
 
-	const refresh_cmd = vscode.commands.registerCommand('floating_notes.refreshView', () => {
+	const refresh_cmd = vscode.commands.registerCommand('floating-notes.refreshView', () => {
 		treeDataProvider.refresh();
 	});
 

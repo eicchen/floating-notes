@@ -1,9 +1,5 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
-import { Mutex } from 'async-mutex';
-
-const mutex = new Mutex();
-
 // const filetypes_notes: string[] = [
 //     "txt",
 //     "md",
@@ -14,46 +10,48 @@ const mutex = new Mutex();
 //     "ts",
 // ];
 
-//TODO change default dir_path
-let dir_path: string = __dirname + '/floating-notes';
-let subdirs: string[] = ['notes', 'scratchpads'].map(name => path.join(dir_path, name));
+//? can make it so you can add stuff?
+const subdirs: string[] = ['notes', 'scratchfiles'];
+let dirPath: string;            //Path of floating-notes folder 
+let subdirPaths: string[];      //Path of subfolders in floating-notes for notes, scratchfiles
 
-export async function fnInitialize(work_path?: string) {
-    //!clear folder for testing
-    const release = await mutex.acquire();
-    if(work_path){
-        dir_path = path.join(work_path, 'floating-notes'); 
-        subdirs = ['notes', 'scratchpads'].map(name => path.join(dir_path, name));
-        console.log(work_path);
+export async function fnInitialize(work_path: string, clearFolder_bool?:boolean) {
+    dirPath = path.join(work_path, 'floating-notes'); 
+    subdirPaths = subdirs.map(name => path.join(dirPath, name));
+    console.log(subdirPaths);
 
+    if(clearFolder_bool == true){
+        //!clear folder for testing
+        try{
+            await clearFolder(dirPath);
+            console.log(`${dirPath}\nDirectory cleared!\n`);
+        }catch{
+            console.error(`${dirPath}\nDirectory clear failed!\n`);
+        }
     }
 
-    await fs.rm(dir_path, {recursive: true, force: true}); 
-    console.log(`${dir_path}\nDirectory cleared!\n`);
+    await createSubdirectories(dirPath);
 
-    await createSubdirectories();
-
-    release();
+    for (let subdir of subdirPaths){
+        await createSubdirectories(subdir);
+    }
 }
-async function createSubdirectories() {
-    for (const fullPath of subdirs) {
+async function createSubdirectories(folderPath: string) {
+    try {
+        await fs.access(folderPath, fs.constants.R_OK | fs.constants.W_OK)
+        console.log(`Folder exists: ${folderPath}`);
+    }catch{
         try {
-            await fs.access(fullPath, fs.constants.R_OK)
-            console.log(`Folder exists: ${fullPath}`);
-        }catch{
-            try {
-                await fs.mkdir(fullPath,{ recursive: true });
-                console.log(`Created: ${fullPath}`);
-            } catch (err) {
-                console.error(`Failed to create ${fullPath}:`, err);
-            }
+            await fs.mkdir(folderPath,{ recursive: true });
+            console.log(`Created: ${folderPath}`);
+        } catch (err) {
+            console.error(`Failed to create ${folderPath}:`, err);
         }
     }
 }
 
 //? Defaults to creating a 'note.md' in the notes folder
-export async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirs[0]){
-    // const release = await mutex.acquire();
+export async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirPaths[0]){
     let fullPath = path.join(dirPath, `${fileName}.${fileType}`);
     try{
         await fs.access(fullPath)
@@ -68,13 +66,20 @@ export async function createFile(fileName:string = "note", fileType: string = "m
         await fs.writeFile(fullPath, "test text");
         console.log(`File added: ${fullPath}`);
     }   
-    // release();
 }
 
+async function clearFolder(dirPath: string){
+    await fs.rm(dirPath, {recursive: true, force: true}); 
+}
 
-
-if(require.main == module){
-    fnInitialize();
-    createFile();
-    createFile();
+if (require.main === module) {
+    (async () => {
+        const test_path: string = path.join(__dirname, '..', 'test_folder');
+        
+        await fnInitialize(test_path, true);
+        await createFile();
+        await createFile();
+    })().catch(err => {
+        console.error('Error during initialization:', err);
+    });
 }
