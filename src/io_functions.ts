@@ -12,8 +12,8 @@ import * as fs from 'fs/promises';
 
 //? can make it so you can add stuff?
 const subdirs: string[] = ['notes', 'scratchfiles'];
-let dirPath: string;            //Path of floating-notes folder 
-let subdirPaths: string[];      //Path of subfolders in floating-notes for notes, scratchfiles
+export let dirPath: string;            //Path of floating-notes folder 
+export let subdirPaths: string[];      //Path of subfolders in floating-notes for notes, scratchfiles
 
 export async function fnInitialize(work_path: string, clearFolder_bool?:boolean) {
     dirPath = path.join(work_path, 'floating-notes'); 
@@ -51,14 +51,14 @@ async function createSubdirectories(folderPath: string) {
 }
 
 //? Defaults to creating a 'note.md' in the notes folder
-export async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirPaths[0]){
-    let fullPath = path.join(dirPath, `${fileName}.${fileType}`);
+export async function createFile(fileName: string = "note", fileType: string = "md", workPath: string = subdirPaths[0]){
+    let fullPath = path.join(workPath, `${fileName}.${fileType}`);
     try{
         await fs.access(fullPath)
 
         let iter: number = 1;
         while(iter < 100){
-            fullPath = path.join(dirPath, `${fileName}(${iter}).${fileType}`);
+            fullPath = path.join(workPath, `${fileName}(${iter}).${fileType}`);
             await fs.access(fullPath);
             iter += 1;
         }

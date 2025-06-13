@@ -19,8 +19,13 @@
         "icon": "$(new-file)"
       },
       {
+        "command": "floating-notes.newScratch",
+        "title": "Floating Notes: Create New Scratchfile",
+        "icon": "$(new-file)"
+      },
+      {
         "command": "floating-notes.refreshView",
-        "title": "Floating Notes: Refresh Notes",
+        "title": "Floating Notes: Refresh",
         "icon": "$(refresh)"
       }
     ],
@@ -29,7 +34,7 @@
         {
           "id": "floating-notes-explorer",
           "title": "Floating Notes Explorer",
-          "icon": "resources/floating-notes-icon.svg"
+          "icon": "resources/floating_notes_icon.svg"
         }
       ]
     },
@@ -38,6 +43,10 @@
         {
           "id": "fn-notes",
           "name": "Notes"
+        },
+        {
+          "id": "fn-scratch",
+          "name": "Scratchfiles"
         }
       ]
     },
@@ -50,8 +59,14 @@
           "group": "navigation"
         },
         {
+          "command": "floating-notes.newScratch",
+          "title": "$(new-file) New Scratch",
+          "when": "view == fn-scratch",
+          "group": "navigation"
+        },
+        {
           "command": "floating-notes.refreshView",
-          "when": "view == fn-notes",
+          "when": "view == fn-notes || view == fn-scratch",
           "group": "navigation"
         }
       ]

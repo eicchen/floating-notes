@@ -3,24 +3,34 @@ import * as vscode from 'vscode';
 // import * as fs from 'fs';
 import { FolderTreeProvider } from "./treeView";
 import * as io_func from "./io_functions";
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
 	// Initialize extension folders 
 	let debug_toggle = true;   // eslint-disable-line 
+	let treeDataProviderList: FolderTreeProvider[] = [];
+
 	const dirPath =  vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0
 		? vscode.workspace.workspaceFolders[0].uri.fsPath
 		: undefined;
 
-	if(dirPath !== undefined){
-		io_func.fnInitialize(dirPath, debug_toggle);
-		console.log('Floating notes initialized');
-		// vscode.window.showInformationMessage(`dirPath: ${dirPath}`);
-	}else{
+	if(!dirPath){
 		vscode.window.showErrorMessage("No workspace open!");
 		return;
 	}
+	
+	await io_func.fnInitialize(dirPath, debug_toggle);
+	console.log('Floating notes initialized');
+	treeDataProviderList = io_func.subdirPaths.map(x => new FolderTreeProvider(x));
 
-	const treeDataProvider = new FolderTreeProvider(dirPath)
-	vscode.window.registerTreeDataProvider('fn-notes', treeDataProvider);
+	if(treeDataProviderList.length >= 2) { 
+		vscode.window.registerTreeDataProvider('fn-notes', treeDataProviderList[0]);
+		vscode.window.registerTreeDataProvider('fn-scratch', treeDataProviderList[1]);
+	}else{
+		vscode.window.showErrorMessage("Not enough subfolders found in floating-notes");
+	}
+
+	for (let iter of treeDataProviderList){
+		iter.refresh();
+	}
 
 	// ------------- UI ------------- //
 	// const newNote_button = vscode.window.createStatusBarItem(2, 10);
@@ -34,18 +44,24 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// ------------- Commands ------------- //
 	const newNote_cmd = vscode.commands.registerCommand('floating-notes.newNote', () => {
-		io_func.createFile();
-		treeDataProvider.refresh();
-		vscode.window.showInformationMessage('New Note created!');
+		let noteArgs = ["note", "md", io_func.subdirPaths[0]];
+		io_func.createFile(...noteArgs);
+		treeDataProviderList[0].refresh();
+	});
+	const newScratch_cmd = vscode.commands.registerCommand('floating-notes.newScratch', () => {
+		//TODO add checks and drop down to configure scratch type
+		let scratchArgs = ["scratch", "py", io_func.subdirPaths[1]];
+		io_func.createFile(...scratchArgs);
+		treeDataProviderList[1].refresh();
 	});
 
 	const refresh_cmd = vscode.commands.registerCommand('floating-notes.refreshView', () => {
-		treeDataProvider.refresh();
+		treeDataProviderList[0].refresh();
+		treeDataProviderList[1].refresh();
 	});
 
 	context.subscriptions.push(newNote_cmd);
 	context.subscriptions.push(refresh_cmd);
 }
 
-// This method is called when your extension is deactivated
 export function deactivate() {}
