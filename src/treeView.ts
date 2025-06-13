@@ -33,6 +33,10 @@ export class FolderTreeProvider implements vscode.TreeDataProvider<FileNode> {
         return Promise.resolve(this.getFilesInDirectory(dirPath));
     }
 
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
+
     private getFilesInDirectory(dir: string): FileNode[] {
         if (!fs.existsSync(dir)) return [];
 

@@ -53,7 +53,7 @@ async function createSubdirectories() {
 
 //? Defaults to creating a 'note.md' in the notes folder
 export async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirs[0]){
-    const release = await mutex.acquire();
+    // const release = await mutex.acquire();
     let fullPath = path.join(dirPath, `${fileName}.${fileType}`);
     // let fullPath = path.join(dirPath, fileName, '.', fileType);
     try{
@@ -69,7 +69,7 @@ export async function createFile(fileName:string = "note", fileType: string = "m
         await fs.writeFile(fullPath, "test text");
         console.log(`File added: ${fullPath}`);
     }   
-    release();
+    // release();
 }
 
 
