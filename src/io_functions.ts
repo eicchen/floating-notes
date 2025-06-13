@@ -55,12 +55,11 @@ async function createSubdirectories() {
 export async function createFile(fileName:string = "note", fileType: string = "md", dirPath: string = subdirs[0]){
     // const release = await mutex.acquire();
     let fullPath = path.join(dirPath, `${fileName}.${fileType}`);
-    // let fullPath = path.join(dirPath, fileName, '.', fileType);
     try{
         await fs.access(fullPath)
 
         let iter: number = 1;
-        while(iter < 10){
+        while(iter < 100){
             fullPath = path.join(dirPath, `${fileName}(${iter}).${fileType}`);
             await fs.access(fullPath);
             iter += 1;
